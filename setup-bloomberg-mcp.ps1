@@ -3,6 +3,7 @@
 # Requires: Bloomberg Terminal open and logged in (bbcomm running) for data to flow.
 
 $ErrorActionPreference = 'Stop'
+if (-not $HOME) { throw 'HOME is empty. Open a normal (non-admin) PowerShell window and retry.' }
 $ProgressPreference    = 'SilentlyContinue'   # makes Invoke-WebRequest much faster in Windows PowerShell 5.1
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -27,7 +28,7 @@ if (-not (Test-Path $claude)) { throw "Claude Code not found at $claude after in
 $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
 $parts = @()
 if ($userPath) { $parts = $userPath -split ';' }
-if ($parts -notcontains $binDir) {
+if ($binDir -and ($parts -notcontains $binDir)) {
     [Environment]::SetEnvironmentVariable('Path', (($parts + $binDir) -join ';'), 'User')
     Write-Host "Added $binDir to your user PATH (applies to new windows)."
 }
